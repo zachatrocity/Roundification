@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Changes Require Respring</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>saveSettings</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Save</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Roundifications</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_NC</string>
+			<key>label</key>
+			<string>Round NC</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_DOCK</string>
+			<key>label</key>
+			<string>Round Dock</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_BANNERS</string>
+			<key>label</key>
+			<string>Round Banners</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_CC</string>
+			<key>label</key>
+			<string>Round CC</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_APP_CARDS</string>
+			<key>label</key>
+			<string>Round App Switcher Cards</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_UI_ALERT_MENU</string>
+			<key>label</key>
+			<string>Round UIAlert Menu</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Other Settings</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>SHOWSTATUS</string>
+			<key>label</key>
+			<string>Show StatusBar in NC</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Contact</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>donateButton:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Donate</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>visitWebsite:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>My website</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>visitTwitter:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>@zachatrocity</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Icon Credits</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<string>visitCreditsTwitter:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>@highdetalio</string>
+		</dict>
+	</array>
+	<key>title</key>
+	<string>Roundification</string>
+</dict>
+</plist>
