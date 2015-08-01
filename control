@@ -2,9 +2,9 @@ Package: com.atrocity.roundification
 Name: Roundification
 Priority: optional
 Depends: mobilesubstrate
-Version: 0.0.1.11.1
+Version: 0.0.2.1
 Architecture: iphoneos-arm
-Description: A tweak to make the NC rounded, as well as notification banners.
+Description: Your one stop shop for all your rounding needs.
 Depiction: http://www.zachatrocity.com/repo/depic/com.atrocity.roundification/index.html
 Maintainer: Zach Russell
 Author: Zach Russell <http://www.zachatrocity.com>

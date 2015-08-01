@@ -1,26 +1,52 @@
 #import <QuartzCore/QuartzCore.h>
 #import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
 #import <substrate.h>
+#include <mach/mach_time.h>
 
+//preferences
 #define ENABLEDNC ([preferences objectForKey: @"ENABLE_NC"] ? [[preferences objectForKey: @"ENABLE_NC"] boolValue] : YES)
 #define ENABLEDCC ([preferences objectForKey: @"ENABLE_CC"] ? [[preferences objectForKey: @"ENABLE_CC"] boolValue] : YES)
 #define ENABLEDBANNERS ([preferences objectForKey: @"ENABLE_BANNERS"] ? [[preferences objectForKey: @"ENABLE_BANNERS"] boolValue] : YES)
-#define ENABLEDDOCK ([preferences objectForKey: @"ENABLE_DOCK"] ? [[preferences objectForKey: @"ENABLE_DOCK"] boolValue] : NO)
+#define ENABLEDDOCK ([preferences objectForKey: @"ENABLE_DOCK"] ? [[preferences objectForKey: @"ENABLE_DOCK"] boolValue] : YES)
 #define ENABLE_APP_CARDS ([preferences objectForKey: @"ENABLE_APP_CARDS"] ? [[preferences objectForKey: @"ENABLE_APP_CARDS"] boolValue] : YES)
 #define SHOWSTATUS ([preferences objectForKey: @"SHOWSTATUS"] ? [[preferences objectForKey: @"SHOWSTATUS"] boolValue] : NO)
 #define ENABLE_UI_ALERT_MENU ([preferences objectForKey: @"ENABLE_UI_ALERT_MENU"] ? [[preferences objectForKey: @"ENABLE_UI_ALERT_MENU"] boolValue] : YES)
+#define BANNER_PADDING_SIDE (CGFloat)([preferences objectForKey: @"BANNER_PADDING_SIDE"] ? [[preferences objectForKey: @"BANNER_PADDING_SIDE"] doubleValue] : 20)
+#define BANNER_PADDING_TOP (CGFloat)([preferences objectForKey: @"BANNER_PADDING_TOP"] ? [[preferences objectForKey: @"BANNER_PADDING_TOP"] doubleValue] : 25)
+#define BANNER_PADDING_BOTTOM (CGFloat)([preferences objectForKey: @"BANNER_PADDING_BOTTOM"] ? [[preferences objectForKey: @"BANNER_PADDING_BOTTOM"] doubleValue] : 40)
+#define ENABLE_UI_TEXT_FIELD ([preferences objectForKey: @"ENABLE_UI_TEXT_FIELD"] ? [[preferences objectForKey: @"ENABLE_UI_TEXT_FIELD"] boolValue] : YES)
+#define NC_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"NC_CORNER_RADIUS"] ? [[preferences objectForKey: @"NC_CORNER_RADIUS"] doubleValue] : 20)
+#define DOCK_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"DOCK_CORNER_RADIUS"] ? [[preferences objectForKey: @"DOCK_CORNER_RADIUS"] doubleValue] : 20)
+#define CC_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"CC_CORNER_RADIUS"] ? [[preferences objectForKey: @"CC_CORNER_RADIUS"] doubleValue] : 20)
+#define APP_CARD_RADIUS (CGFloat)([preferences objectForKey: @"APP_CARD_RADIUS"] ? [[preferences objectForKey: @"APP_CARD_RADIUS"] doubleValue] : 20)
+#define ALERT_MENU_RADIUS (CGFloat)([preferences objectForKey: @"ALERT_MENU_RADIUS"] ? [[preferences objectForKey: @"ALERT_MENU_RADIUS"] doubleValue] : 20)
+#define TEXT_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"TEXT_CORNER_RADIUS"] ? [[preferences objectForKey: @"TEXT_CORNER_RADIUS"] doubleValue] : 15)
+#define BANNER_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"BANNER_CORNER_RADIUS"] ? [[preferences objectForKey: @"BANNER_CORNER_RADIUS"] doubleValue] : 15)
 
-#define WIDTH_FOR_ORIENTATION(orientation) (UIInterfaceOrientationIsLandscape(orientation) \
-	? [UIScreen mainScreen].bounds.size.height \
-	: [UIScreen mainScreen].bounds.size.width);
+#define IS_IOS_8_PLUS() [%c(SBBannerController) instancesRespondToSelector: @selector(_cancelBannerDismissTimers)]
 
+@interface SBWindow : UIView
+@end
 
+@interface UIWindowLayer : CALayer
+@end
 
 @interface SBDefaultBannerTextView : NSObject
 -(void)setSecondaryTextAlpha:(float)alpha;
 @end
 
+@interface SBBannerContextView : UIView
+-(BOOL)isPulledDown;
+@end
+
 @interface SBBannerContainerView : UIView
+@end
+
+@interface SBControlCenterRootView : UIView
+@end
+
+@interface SBDockView : UIView
 @end
 
 @interface SBControlCenterContentView : NSObject
@@ -50,19 +76,39 @@ static void reloadPreferences() {
 {
 	%orig;
 	if(ENABLEDBANNERS){
-		UIView *banView = MSHookIvar<UIView *>(self, "_bannerView");
-		banView.layer.cornerRadius = 15;
+		SBBannerContextView *banView = MSHookIvar<SBBannerContextView *>(self, "_bannerView");
+		banView.layer.cornerRadius = BANNER_CORNER_RADIUS;
 		banView.layer.masksToBounds = YES;
 		CGFloat width = [UIScreen mainScreen].bounds.size.width;
 		CGFloat height = self.frame.size.height;
-		[self setFrame:(CGRect){{10,30},{width - 20, height}}];
-		banView.frame = (CGRect){{banView.frame.origin.x, banView.frame.origin.y},{self.frame.size.width, banView.frame.size.height}};
+
+		[self setFrame:(CGRect){{BANNER_PADDING_SIDE/2,BANNER_PADDING_TOP},{width - BANNER_PADDING_SIDE, height}}];
+
+		NSFileManager * fileManager = [NSFileManager defaultManager];
+		if([fileManager fileExistsAtPath:@"/var/mobile/Library/Preferences/me.qusic.couria.plist"])
+		{
+			NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:@"/var/mobile/Library/Preferences/me.qusic.couria.plist"];
+			if([banView isPulledDown] && [[dict objectForKey:@"com.apple.MobileSMS.enabled"] boolValue])
+			{
+				banView.frame = (CGRect){{banView.frame.origin.x, banView.frame.origin.y},{self.frame.size.width, banView.frame.size.height - BANNER_PADDING_BOTTOM}};
+			}
+			else
+			{
+				banView.frame = (CGRect){{banView.frame.origin.x, banView.frame.origin.y},{self.frame.size.width, banView.frame.size.height}};	
+			}
+		}
+		else
+		{
+			banView.frame = (CGRect){{banView.frame.origin.x, banView.frame.origin.y},{self.frame.size.width, banView.frame.size.height}};	
+		}
+	
 
 		UIView *backdropView = MSHookIvar<UIView *>(self, "_backgroundView");
 		backdropView.alpha = 0.0;
 	}
 }
 %end
+
 
 //
 // Notification Center
@@ -74,7 +120,7 @@ static void reloadPreferences() {
 
     if (ENABLEDNC){
 	    UIViewController *ncViewController = MSHookIvar<UIViewController *>(self, "_viewController");
-	   	ncViewController.view.layer.cornerRadius = 20;
+	   	ncViewController.view.layer.cornerRadius = NC_CORNER_RADIUS;
 	    ncViewController.view.layer.masksToBounds = YES;
 
 	    CGFloat width = [UIScreen mainScreen].bounds.size.width;
@@ -101,17 +147,13 @@ static void reloadPreferences() {
 -(void)_beginPresentation
 {
 	%orig;
-
 	if(ENABLEDCC)
 	{
 		UIViewController *ccViewController = MSHookIvar<UIViewController *>(self, "_viewController");
-		CGFloat width = [UIScreen mainScreen].bounds.size.width;
-	    CGRect fr = ccViewController.view.frame;
-	    ccViewController.view.frame = (CGRect){{10, -10}, {width - 20, fr.size.height}};
-
 	    UIView * ccContainerView = MSHookIvar<UIView *>(ccViewController,"_containerView");
+
 	    UIView * ccContentContainerView = MSHookIvar<UIView *>(ccContainerView, "_contentContainerView");
-	    ccContentContainerView.layer.cornerRadius = 20;
+	    ccContentContainerView.layer.cornerRadius = CC_CORNER_RADIUS;
 	    ccContentContainerView.layer.masksToBounds = YES;
 
 		UIView * darkView = MSHookIvar<UIView *>(ccContainerView, "_darkeningView");
@@ -119,6 +161,31 @@ static void reloadPreferences() {
 	}
 }
 %end
+
+%hook SBControlCenterRootView
+-(void)layoutSubviews
+{
+
+	%orig;
+	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+	CGFloat CCWidth;
+
+	if ( ([[UIDevice currentDevice] orientation] ==  UIDeviceOrientationPortrait)  )
+	{
+	   	// do something for Portrait mode
+		CCWidth = [UIScreen mainScreen].bounds.size.width;
+	}
+	else if(([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) || ([[UIDevice currentDevice] orientation] == UIInterfaceOrientationLandscapeLeft))
+	{
+	   	// do something for Landscape mode
+	   	CCWidth = [UIScreen mainScreen].bounds.size.height;
+	}
+	
+    CGRect fr = self.frame;
+    self.frame = (CGRect){{10, 0}, {CCWidth - 20, fr.size.height - 10}};
+}
+%end
+
 
 //
 // App Switcher Cards
@@ -130,8 +197,10 @@ static void reloadPreferences() {
 	if (ENABLE_APP_CARDS)
 	{
 		UIView * contentView = MSHookIvar<UIView *>(self, "_view");
-		contentView.layer.cornerRadius = 20;
+		contentView.layer.cornerRadius = APP_CARD_RADIUS;
 		contentView.layer.masksToBounds = YES;
+		UIView * shadow = MSHookIvar<UIView *>(self, "_shadowView");
+		shadow.alpha = 0.0;
 	}
 }
 %end
@@ -139,17 +208,21 @@ static void reloadPreferences() {
 //
 // Dock
 //
-%hook SBRootFolderView
--(void)layoutDockView
+%hook SBDockView
+-(void)layoutSubviews
 {
 	%orig;
+	UIView * backgroundView = MSHookIvar<UIView *>(self, "_backgroundView");
+	UIView * highLightView = MSHookIvar<UIView *>(self, "_highlightView");
+	CGFloat highLightViewAlpha = MSHookIvar<CGFloat>(highLightView, "_highlightAlpha");
 	if(ENABLEDDOCK)
 	{
-		CGFloat width = [UIScreen mainScreen].bounds.size.width;
-		UIView * dock = MSHookIvar<UIView *>(self, "_dockView");
-		dock.layer.cornerRadius = 20;
-		dock.layer.masksToBounds = YES;
-		dock.frame = (CGRect){{5, dock.frame.origin.y - 5},{width - 10, dock.frame.size.height}};
+		highLightView.alpha = 0;
+		highLightViewAlpha = 0;
+		backgroundView.layer.cornerRadius = DOCK_CORNER_RADIUS;
+		backgroundView.layer.masksToBounds = YES;
+		CGRect frame = backgroundView.frame;
+		backgroundView.frame = (CGRect){{10, frame.origin.y},{frame.size.width - 20, frame.size.height}};
 	}
 }
 %end
@@ -162,7 +235,7 @@ static void reloadPreferences() {
 {
 	if(ENABLE_UI_ALERT_MENU)
 	{	
-		return 20.0;
+		return ALERT_MENU_RADIUS;
 	}
 	else
 	{
@@ -171,11 +244,153 @@ static void reloadPreferences() {
 }
 %end
 
-// static void settingschanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo){
-//     reloadPreferences();
+
+//
+//UITextField
+//
+%hook UITextField
+-(void)layoutSubviews
+{
+	%orig;
+	if(ENABLE_UI_TEXT_FIELD)
+	{
+		self.layer.cornerRadius = TEXT_CORNER_RADIUS;
+		self.layer.masksToBounds = YES;
+	}
+}
+%end
+
+
+
+//
+// Round Screen Corners
+//
+// %hook SBWindow
+// -(id)_initWithScreen:(id)screen layoutStrategy:(id)strategy debugName:(id)name scene:(id)scene
+// {
+// 	id result = %orig(screen,strategy,name,scene);
+// 	self.layer.cornerRadius = 15;
+// 	self.layer.masksToBounds = YES;
+// 	return result;
 // }
+// -(id)initWithFrame:(CGRect)frame
+// {
+// 	id result = %orig(frame);
+// 	self.layer.cornerRadius = 15;
+// 	self.layer.masksToBounds = YES;
+// 	return result;
+// }
+// -(id)initWithScreen:(id)screen layoutStrategy:(id)strategy debugName:(id)name scene:(id)scene
+// {
+// 	id result = %orig(screen,strategy,name,scene);
+// 	self.layer.cornerRadius = 15;
+// 	self.layer.masksToBounds = YES;
+// 	return result;
+// }
+// -(id)initWithScreen:(id)screen layoutStrategy:(id)strategy debugName:(id)name
+// {
+// 	id result = %orig(screen,strategy,name);
+// 	self.layer.cornerRadius = 15;
+// 	self.layer.masksToBounds = YES;
+// 	return result;
+// }
+// -(id)initWithScreen:(id)screen debugName:(id)name scene:(id)scene
+// {
+// 	id result = %orig(screen,name,scene);
+// 	self.layer.cornerRadius = 15;
+// 	self.layer.masksToBounds = YES;
+// 	return result;
+// }
+// -(id)initWithScreen:(id)screen debugName:(id)name
+// {
+// 	id result = %orig(screen,name);
+// 	self.layer.cornerRadius = 15;
+// 	self.layer.masksToBounds = YES;
+// 	return result;
+// }
+// %end
+
+// %hook UIWindowLayer
+// -(void)setFrame:(CGRect)frame
+// {
+// 	%orig(frame);
+// 	self.cornerRadius = 15;
+// 	self.masksToBounds = YES;
+// }
+// %end
+
+static void showTestBanner()
+{
+	id request = [[[%c(BBBulletinRequest) alloc] init] autorelease];
+	[request setTitle: @"Roundification"];
+
+	[request setMessage: @"Preferences saved! You're a superstar."];
+	[request setSectionID: @"com.apple.Preferences"];
+	[request setDefaultAction: [%c(BBAction) action]];
+
+	id ctrl = [%c(SBBulletinBannerController) sharedInstance];
+	if ([ctrl respondsToSelector:@selector(observer:addBulletin:forFeed:)]) {
+		[ctrl observer:nil addBulletin:request forFeed:2];
+	} else if ([ctrl respondsToSelector:@selector(observer:addBulletin:forFeed:playLightsAndSirens:withReply:)]) {
+		[ctrl observer:nil addBulletin:request forFeed:2 playLightsAndSirens:YES withReply:nil];
+	}
+}
+
+static inline void prefsChanged(CFNotificationCenterRef center,
+									void *observer,
+									CFStringRef name,
+									const void *object,
+									CFDictionaryRef userInfo) {
+
+	reloadPreferences();
+
+	//Thanks Alex - https://github.com/alexzielenski/TinyBar/blob/master/tweak/Tweak.xm
+
+	id bctrl = [%c(SBBannerController) sharedInstance];
+	// id ctrl = [%c(SBBulletinBannerController) sharedInstance];
+
+	[NSObject cancelPreviousPerformRequestsWithTarget:bctrl selector:@selector(_replaceIntervalElapsed) object:nil];
+	[NSObject cancelPreviousPerformRequestsWithTarget:bctrl selector:@selector(_dismissIntervalElapsed) object:nil];
+
+    // Hide previous banner
+ 	if (IS_IOS_8_PLUS()) {
+ 		if (![bctrl _bannerContext]) {
+ 			[bctrl _replaceIntervalElapsed];
+ 			[bctrl _dismissIntervalElapsed];
+	 		showTestBanner();
+ 		} else {
+ 			[bctrl _replaceIntervalElapsed];
+ 			[bctrl _dismissIntervalElapsed];
+ 			//! This is the hackiest thing i've seen in my life
+ 			// We need to wait for the bannerContext to go away
+ 			// before we add another banner. I tried messing with
+ 			// completion blocks of the banner controller which
+ 			// resulted in crashes after rapidly showing test banners
+ 			dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+ 				// time out after 2 seconds
+ 				uint64_t start = mach_absolute_time();
+ 				mach_timebase_info_data_t info;
+ 				mach_timebase_info(&info);
+				while([bctrl _bannerContext] && (CGFloat)(mach_absolute_time() - start) * info.numer / info.denom / pow(10, 9) < 2.0) {
+					[[NSRunLoop currentRunLoop] runUntilDate: [NSDate date]];
+				}
+				dispatch_async(dispatch_get_main_queue(), ^() {
+					[bctrl _replaceIntervalElapsed];
+					showTestBanner();
+				});
+			});
+ 		}
+
+ 	} else {
+	 	[bctrl _replaceIntervalElapsed];
+	 	[bctrl _dismissIntervalElapsed];
+	 	showTestBanner();
+ 	}
+}
 
 %ctor {
-	//CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, settingschanged, CFSTR("com.atrocity.roundification"), NULL, CFNotificationSuspensionBehaviorCoalesce);
 	reloadPreferences();
+
+	CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();
+	CFNotificationCenterAddObserver(center, NULL, &prefsChanged, (CFStringRef)@"com.atrocity.roundification/prefsChanged", NULL, 0);
 }

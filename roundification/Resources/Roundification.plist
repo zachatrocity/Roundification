@@ -5,26 +5,30 @@
 	<key>items</key>
 	<array>
 		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Changes Require Respring</string>
-		</dict>
-		<dict>
 			<key>action</key>
-			<string>saveSettings</string>
+			<string>donateButton:</string>
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Save</string>
+			<string>Donate</string>
 		</dict>
+<!-- 		<dict>
+			<key>action</key>
+			<string>resetDefaults:</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Reset To Defaults</string>
+		</dict> -->
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Roundifications</string>
+			<string>NC</string>
 		</dict>
 		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -37,10 +41,38 @@
 			<string>Round NC</string>
 		</dict>
 		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>20</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>NC_CORNER_RADIUS</string>
+			<key>key</key>
+			<string>NC_CORNER_RADIUS</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Dock</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
-			<false/>
+			<true/>
 			<key>defaults</key>
 			<string>com.atrocity.roundification</string>
 			<key>key</key>
@@ -49,18 +81,34 @@
 			<string>Round Dock</string>
 		</dict>
 		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
 			<key>default</key>
-			<true/>
+			<real>20</real>
 			<key>defaults</key>
 			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>DOCK_CORNER_RADIUS</string>
 			<key>key</key>
-			<string>ENABLE_BANNERS</string>
-			<key>label</key>
-			<string>Round Banners</string>
+			<string>DOCK_CORNER_RADIUS</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
 		</dict>
 		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>CC</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -73,6 +121,34 @@
 			<string>Round CC</string>
 		</dict>
 		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>20</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>CC_CORNER_RADIUS</string>
+			<key>key</key>
+			<string>CC_CORNER_RADIUS</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>App Switcher Cards</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -85,6 +161,34 @@
 			<string>Round App Switcher Cards</string>
 		</dict>
 		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>20</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>APP_CARD_RADIUS</string>
+			<key>key</key>
+			<string>APP_CARD_RADIUS</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>UIAlert Menu</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -97,12 +201,244 @@
 			<string>Round UIAlert Menu</string>
 		</dict>
 		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>20</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>ALERT_MENU_RADIUS</string>
+			<key>key</key>
+			<string>ALERT_MENU_RADIUS</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>UITextField</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_UI_TEXT_FIELD</string>
+			<key>label</key>
+			<string>Round UITextField</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>15</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>TEXT_CORNER_RADIUS</string>
+			<key>key</key>
+			<string>TEXT_CORNER_RADIUS</string>
+			<key>max</key>
+			<real>25</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Keyboard Prediction Cells</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_KB_CELL</string>
+			<key>label</key>
+			<string>Round Keyboard Prediction Cells</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>15</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>TEXT_CORNER_RADIUS</string>
+			<key>key</key>
+			<string>TEXT_CORNER_RADIUS</string>
+			<key>max</key>
+			<real>25</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Banners</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>ENABLE_BANNERS</string>
+			<key>label</key>
+			<string>Round Banners</string>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>15</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>BANNER_CORNER_RADIUS</string>
+			<key>key</key>
+			<string>BANNER_CORNER_RADIUS</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Banner Size Settings (No respring required)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Banner Side Margin (PX)</string>
+			<key>isStaticText</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>20</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>BANNER_PADDING_SIDE</string>
+			<key>key</key>
+			<string>BANNER_PADDING_SIDE</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Banner Top Margin (PX)</string>
+			<key>isStaticText</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>25</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>BANNER_PADDING_TOP</string>
+			<key>key</key>
+			<string>BANNER_PADDING_TOP</string>
+			<key>max</key>
+			<real>40</real>
+			<key>min</key>
+			<real>0</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>Banner Bottom Margin (USED FOR COURIA)</string>
+			<key>isStaticText</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>40</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>BANNER_PADDING_BOTTOM</string>
+			<key>key</key>
+			<string>BANNER_PADDING_BOTTOM</string>
+			<key>max</key>
+			<real>200</real>
+			<key>min</key>
+			<real>25</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Other Settings</string>
 		</dict>
 		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -119,14 +455,6 @@
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Contact</string>
-		</dict>
-		<dict>
-			<key>action</key>
-			<string>donateButton:</string>
-			<key>cell</key>
-			<string>PSButtonCell</string>
-			<key>label</key>
-			<string>Donate</string>
 		</dict>
 		<dict>
 			<key>action</key>
