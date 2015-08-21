@@ -6,6 +6,7 @@
 
 //preferences
 #define ENABLEDNC ([preferences objectForKey: @"ENABLE_NC"] ? [[preferences objectForKey: @"ENABLE_NC"] boolValue] : YES)
+#define SHRINKNC ([preferences objectForKey: @"SHRINKNC"] ? [[preferences objectForKey: @"SHRINKNC"] boolValue] : NO)
 #define ENABLEDCC ([preferences objectForKey: @"ENABLE_CC"] ? [[preferences objectForKey: @"ENABLE_CC"] boolValue] : YES)
 #define ENABLEDBANNERS ([preferences objectForKey: @"ENABLE_BANNERS"] ? [[preferences objectForKey: @"ENABLE_BANNERS"] boolValue] : YES)
 #define ENABLEDDOCK ([preferences objectForKey: @"ENABLE_DOCK"] ? [[preferences objectForKey: @"ENABLE_DOCK"] boolValue] : YES)
@@ -16,13 +17,17 @@
 #define BANNER_PADDING_TOP (CGFloat)([preferences objectForKey: @"BANNER_PADDING_TOP"] ? [[preferences objectForKey: @"BANNER_PADDING_TOP"] doubleValue] : 25)
 #define BANNER_PADDING_BOTTOM (CGFloat)([preferences objectForKey: @"BANNER_PADDING_BOTTOM"] ? [[preferences objectForKey: @"BANNER_PADDING_BOTTOM"] doubleValue] : 40)
 #define ENABLE_UI_TEXT_FIELD ([preferences objectForKey: @"ENABLE_UI_TEXT_FIELD"] ? [[preferences objectForKey: @"ENABLE_UI_TEXT_FIELD"] boolValue] : YES)
+//#define ENABLE_KB_CELL ([preferences objectForKey: @"ENABLE_KB_CELL"] ? [[preferences objectForKey: @"ENABLE_KB_CELL"] boolValue] : YES)
 #define NC_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"NC_CORNER_RADIUS"] ? [[preferences objectForKey: @"NC_CORNER_RADIUS"] doubleValue] : 20)
 #define DOCK_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"DOCK_CORNER_RADIUS"] ? [[preferences objectForKey: @"DOCK_CORNER_RADIUS"] doubleValue] : 20)
 #define CC_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"CC_CORNER_RADIUS"] ? [[preferences objectForKey: @"CC_CORNER_RADIUS"] doubleValue] : 20)
 #define APP_CARD_RADIUS (CGFloat)([preferences objectForKey: @"APP_CARD_RADIUS"] ? [[preferences objectForKey: @"APP_CARD_RADIUS"] doubleValue] : 20)
 #define ALERT_MENU_RADIUS (CGFloat)([preferences objectForKey: @"ALERT_MENU_RADIUS"] ? [[preferences objectForKey: @"ALERT_MENU_RADIUS"] doubleValue] : 20)
 #define TEXT_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"TEXT_CORNER_RADIUS"] ? [[preferences objectForKey: @"TEXT_CORNER_RADIUS"] doubleValue] : 15)
+//#define KBCELL_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"KBCELL_CORNER_RADIUS"] ? [[preferences objectForKey: @"KBCELL_CORNER_RADIUS"] doubleValue] : 15)
 #define BANNER_CORNER_RADIUS (CGFloat)([preferences objectForKey: @"BANNER_CORNER_RADIUS"] ? [[preferences objectForKey: @"BANNER_CORNER_RADIUS"] doubleValue] : 15)
+#define NC_SHRINK_MULTIPLIER (CGFloat)([preferences objectForKey: @"NC_SHRINK_MULTIPLIER"] ? [[preferences objectForKey: @"NC_SHRINK_MULTIPLIER"] doubleValue] : 5)
+
 
 #define IS_IOS_8_PLUS() [%c(SBBannerController) instancesRespondToSelector: @selector(_cancelBannerDismissTimers)]
 
@@ -44,6 +49,9 @@
 @end
 
 @interface SBControlCenterRootView : UIView
+@end
+
+@interface UIKeyboardPredictionCell : UIView
 @end
 
 @interface SBDockView : UIView
@@ -79,10 +87,15 @@ static void reloadPreferences() {
 		SBBannerContextView *banView = MSHookIvar<SBBannerContextView *>(self, "_bannerView");
 		banView.layer.cornerRadius = BANNER_CORNER_RADIUS;
 		banView.layer.masksToBounds = YES;
-		CGFloat width = [UIScreen mainScreen].bounds.size.width;
+		CGFloat BannerWidth = [UIScreen mainScreen].bounds.size.width;
 		CGFloat height = self.frame.size.height;
 
-		[self setFrame:(CGRect){{BANNER_PADDING_SIDE/2,BANNER_PADDING_TOP},{width - BANNER_PADDING_SIDE, height}}];
+		if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft || [[UIDevice currentDevice] orientation ]== UIDeviceOrientationLandscapeRight)
+		{
+			BannerWidth = [UIScreen mainScreen].bounds.size.height;
+		}	
+
+		[self setFrame:(CGRect){{BANNER_PADDING_SIDE/2,BANNER_PADDING_TOP},{BannerWidth - BANNER_PADDING_SIDE, height}}];
 
 		NSFileManager * fileManager = [NSFileManager defaultManager];
 		if([fileManager fileExistsAtPath:@"/var/mobile/Library/Preferences/me.qusic.couria.plist"])
@@ -123,12 +136,38 @@ static void reloadPreferences() {
 	   	ncViewController.view.layer.cornerRadius = NC_CORNER_RADIUS;
 	    ncViewController.view.layer.masksToBounds = YES;
 
+
 	    CGFloat width = [UIScreen mainScreen].bounds.size.width;
 	    CGFloat height = [UIScreen mainScreen].bounds.size.height;
 	    ncViewController.view.transform = CGAffineTransformIdentity;
-	    ncViewController.view.frame = (CGRect){{0,0},{width, height}};
-	    ncViewController.view.bounds = (CGRect){{0,0},{width, height}};
-		ncViewController.view.transform = CGAffineTransformScale(ncViewController.view.transform, 0.94,0.94);
+		ncViewController.view.frame = (CGRect){{0,0},{width, height}};
+		    
+		if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft || [[UIDevice currentDevice] orientation ]== UIDeviceOrientationLandscapeRight)
+		{
+		    //Landscape mode	
+		    ncViewController.view.frame = (CGRect){{0,0},{height, width}};
+		}
+		
+		if(SHRINKNC){
+			for (int i = 0; i < NC_SHRINK_MULTIPLIER; ++i)
+			{
+				if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft || [[UIDevice currentDevice] orientation ]== UIDeviceOrientationLandscapeRight)
+				{
+				    //Landscape mode	
+				    ncViewController.view.frame = (CGRect){{0,0},{height, width}};
+				}
+				else{
+					ncViewController.view.frame = (CGRect){{0,0},{width, height}};
+				}
+				ncViewController.view.transform = CGAffineTransformScale(ncViewController.view.transform, 0.94,0.94);
+			}
+		}
+		else{
+			ncViewController.view.transform = CGAffineTransformScale(ncViewController.view.transform, 0.94,0.94);
+		}
+		
+		
+
 
 	    if (!SHOWSTATUS)
 	    {
@@ -165,24 +204,22 @@ static void reloadPreferences() {
 %hook SBControlCenterRootView
 -(void)layoutSubviews
 {
-
 	%orig;
-	[[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-	CGFloat CCWidth;
-
-	if ( ([[UIDevice currentDevice] orientation] ==  UIDeviceOrientationPortrait)  )
-	{
-	   	// do something for Portrait mode
-		CCWidth = [UIScreen mainScreen].bounds.size.width;
-	}
-	else if(([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight) || ([[UIDevice currentDevice] orientation] == UIInterfaceOrientationLandscapeLeft))
-	{
-	   	// do something for Landscape mode
-	   	CCWidth = [UIScreen mainScreen].bounds.size.height;
-	}
 	
-    CGRect fr = self.frame;
-    self.frame = (CGRect){{10, 0}, {CCWidth - 20, fr.size.height - 10}};
+	if (ENABLEDCC)
+	{
+		CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
+		CGFloat CCWidth = screenWidth - 20;
+		CGRect fr = self.frame;
+		CGFloat xmargin = 10.0;
+		CGFloat ymargin = 0.0;
+		if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft || [[UIDevice currentDevice] orientation ]== UIDeviceOrientationLandscapeRight)
+		{
+			ymargin = (screenWidth - CCWidth);
+		}	
+
+	    self.frame = (CGRect){{xmargin, ymargin}, {CCWidth, fr.size.height - 10}};
+	}
 }
 %end
 
@@ -214,11 +251,9 @@ static void reloadPreferences() {
 	%orig;
 	UIView * backgroundView = MSHookIvar<UIView *>(self, "_backgroundView");
 	UIView * highLightView = MSHookIvar<UIView *>(self, "_highlightView");
-	CGFloat highLightViewAlpha = MSHookIvar<CGFloat>(highLightView, "_highlightAlpha");
 	if(ENABLEDDOCK)
 	{
 		highLightView.alpha = 0;
-		highLightViewAlpha = 0;
 		backgroundView.layer.cornerRadius = DOCK_CORNER_RADIUS;
 		backgroundView.layer.masksToBounds = YES;
 		CGRect frame = backgroundView.frame;
@@ -260,6 +295,21 @@ static void reloadPreferences() {
 }
 %end
 
+//
+//UIKeyboardPredictionCell
+//
+// %hook UIKeyboardPredictionCell
+// -(id)initWithFrame:(CGRect)frame
+// {
+// 	id result = %orig(frame);
+// 	if(ENABLE_KB_CELL)
+// 	{
+// 		self.layer.masksToBounds = YES;
+// 		self.layer.cornerRadius = KBCELL_CORNER_RADIUS;
+// 	}
+// 	return result;
+// }
+// %end
 
 
 //

@@ -260,7 +260,7 @@
 			<key>showValue</key>
 			<true/>
 		</dict>
-		<dict>
+		<!-- <dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
@@ -290,16 +290,16 @@
 			<key>defaults</key>
 			<string>com.atrocity.roundification</string>
 			<key>id</key>
-			<string>TEXT_CORNER_RADIUS</string>
+			<string>KBCELL_CORNER_RADIUS</string>
 			<key>key</key>
-			<string>TEXT_CORNER_RADIUS</string>
+			<string>KBCELL_CORNER_RADIUS</string>
 			<key>max</key>
 			<real>25</real>
 			<key>min</key>
 			<real>0</real>
 			<key>showValue</key>
 			<true/>
-		</dict>
+		</dict> -->
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
@@ -450,6 +450,49 @@
 			<key>label</key>
 			<string>Show StatusBar in NC</string>
 		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>key</key>
+			<string>SHRINKNC</string>
+			<key>label</key>
+			<string>Shrink NC Content</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>NC Shrink Multiplier</string>
+			<key>isStaticText</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>PostNotification</key>
+			<string>com.atrocity.roundification/prefsChanged</string>
+			<key>cellClass</key>
+			<string>BetterPSSliderTableCell</string>
+			<key>default</key>
+			<real>5</real>
+			<key>defaults</key>
+			<string>com.atrocity.roundification</string>
+			<key>id</key>
+			<string>NC_SHRINK_MULTIPLIER</string>
+			<key>key</key>
+			<string>NC_SHRINK_MULTIPLIER</string>
+			<key>max</key>
+			<real>15</real>
+			<key>min</key>
+			<real>1</real>
+			<key>showValue</key>
+			<true/>
+		</dict>
+
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>

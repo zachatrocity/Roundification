@@ -8,6 +8,8 @@ Roundification_FILES = Tweak.xm
 Roundification_FRAMEWORKS = UIKit CoreGraphics Foundation QuartzCore
 
 include $(THEOS_MAKE_PATH)/tweak.mk
+THEOS_PACKAGE_BASE_VERSION = 0.0.2.6-13
+_THEOS_INTERNAL_PACKAGE_VERSION = 0.0.2.6-13
 
 after-install::
 	install.exec "killall -9 SpringBoard"
