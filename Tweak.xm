@@ -439,6 +439,9 @@ static inline void prefsChanged(CFNotificationCenterRef center,
 }
 
 %ctor {
+
+	
+	
 	reloadPreferences();
 
 	CFNotificationCenterRef center = CFNotificationCenterGetDarwinNotifyCenter();
