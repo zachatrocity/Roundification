@@ -4,6 +4,7 @@
 #import <substrate.h>
 #include <mach/mach_time.h>
 
+#define log(z) NSLog(@"[Roundification] %@", z)
 //preferences
 #define ENABLEDNC ([preferences objectForKey: @"ENABLE_NC"] ? [[preferences objectForKey: @"ENABLE_NC"] boolValue] : YES)
 #define SHRINKNC ([preferences objectForKey: @"SHRINKNC"] ? [[preferences objectForKey: @"SHRINKNC"] boolValue] : NO)
@@ -49,6 +50,9 @@
 @end
 
 @interface SBControlCenterRootView : UIView
+@end
+
+@interface SBNotificationCenterViewController : UIViewController
 @end
 
 @interface UIKeyboardPredictionCell : UIView
@@ -126,6 +130,66 @@ static void reloadPreferences() {
 //
 // Notification Center
 //
+%hook SBNotificationCenterViewController
+
+-(void)hostWillPresent 
+{
+
+	if (ENABLEDNC) {
+	  @try {
+	  		log(self.view);
+	  		self.view.layer.cornerRadius = NC_CORNER_RADIUS;
+		    self.view.layer.masksToBounds = YES;
+
+
+		    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+		    CGFloat height = [UIScreen mainScreen].bounds.size.height;
+		    self.view.transform = CGAffineTransformIdentity;
+			self.view.frame = (CGRect){{0,0},{width, height}};
+			    
+			if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft || [[UIDevice currentDevice] orientation ]== UIDeviceOrientationLandscapeRight)
+			{
+			    //Landscape mode	
+			    self.view.frame = (CGRect){{0,0},{height, width}};
+			}
+			
+			if(SHRINKNC){
+				for (int i = 0; i < NC_SHRINK_MULTIPLIER; ++i)
+				{
+					if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft || [[UIDevice currentDevice] orientation ]== UIDeviceOrientationLandscapeRight)
+					{
+					    //Landscape mode	
+					    self.view.frame = (CGRect){{0,0},{height, width}};
+					}
+					else{
+						self.view.frame = (CGRect){{0,0},{width, height}};
+					}
+					self.view.transform = CGAffineTransformScale(self.view.transform, 0.94,0.94);
+				}
+			}
+			else{
+				self.view.transform = CGAffineTransformScale(self.view.transform, 0.94,0.94);
+			}
+
+
+		    if (!SHOWSTATUS)
+		    {
+	    		UIView *statusbar = MSHookIvar<UIView *>(self, "_statusBar");
+	    		statusbar.alpha = 0.0;
+	    	}
+
+		}
+		@catch (NSException *e) {
+			NSLog(@"[Roundification] Exception %@",e);
+		}
+		@finally {}
+
+	}
+
+	%orig;
+}
+%end
+
 %hook SBNotificationCenterController
 -(void)beginPresentationWithTouchLocation:(CGPoint)arg1 {
 
